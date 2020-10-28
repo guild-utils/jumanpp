@@ -1,0 +1,22 @@
+name: build
+on: 
+  push: 
+    branches: master
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          lfs: true
+      - uses: rlespinasse/github-slug-action@v2.x
+      - uses: docker/build-push-action@v2
+        env:
+          DOCKER_BUILDKIT: "1"
+        with:
+          repository: 
+          username: tignear
+          password: ${{ secrets.DOCKER_TOKEN }}
+          tags: guildutils/jumanpp:latest,guildutils/jumanpp:${{ env.GITHUB_SHA_SHORT }}
+          build_args: GIT_SHORT_COMMIT_HASH=${{ env.GITHUB_SHA_SHORT }},BUILDKIT_INLINE_CACHE=1
+          cache_froms: guildutils/jumanpp:latest
